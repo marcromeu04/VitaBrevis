@@ -301,20 +301,21 @@ async def legal_disclaimer():
 # DESARROLLO - Seed data
 # ============================================
 
-if settings.CREATE_DEMO_DATA and settings.ENVIRONMENT == "development":
-    @app.get("/api/dev/seed-data")
-    async def seed_demo_data():
-        """
-        SOLO DESARROLLO: Crea datos de demostración
-        """
-        from app.services.seed_service import create_demo_data
-
-        try:
-            create_demo_data()
-            return {"message": "Demo data created successfully"}
-        except Exception as e:
-            logger.error(f"Error creating demo data: {str(e)}")
-            return {"error": str(e)}
+# TODO: Implementar seed_service para datos de demostración
+# if settings.CREATE_DEMO_DATA and settings.ENVIRONMENT == "development":
+#     @app.get("/api/dev/seed-data")
+#     async def seed_demo_data():
+#         """
+#         SOLO DESARROLLO: Crea datos de demostración
+#         """
+#         from app.services.seed_service import create_demo_data
+#
+#         try:
+#             create_demo_data()
+#             return {"message": "Demo data created successfully"}
+#         except Exception as e:
+#             logger.error(f"Error creating demo data: {str(e)}")
+#             return {"error": str(e)}
 
 
 if __name__ == "__main__":

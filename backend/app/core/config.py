@@ -3,9 +3,9 @@ Configuración de la aplicación
 Carga variables de entorno y define configuración global
 """
 
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic_settings import BaseSettings
-from pydantic import validator, Field
+from pydantic import field_validator, Field
 
 
 class Settings(BaseSettings):
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
 
     # Database
     DB_USER: str = "vitabrevis"
-    DB_PASSWORD: str
+    DB_PASSWORD: str = "changeme"  # Default para desarrollo
     DB_HOST: str = "localhost"
     DB_PORT: int = 5432
     DB_NAME: str = "vitabrevis_db"
@@ -38,17 +38,18 @@ class Settings(BaseSettings):
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     # Seguridad
-    SECRET_KEY: str
+    SECRET_KEY: str = "dev-secret-key-change-in-production-min-32-chars"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    ENCRYPTION_KEY: str  # Para cifrado AES-256 de datos sensibles
+    ENCRYPTION_KEY: str = "dev-encryption-key-change-prod"
 
-    # CORS
-    CORS_ORIGINS: str = "http://localhost:3000"
+    # CORS - Puede ser string o lista
+    CORS_ORIGINS: Union[str, List[str]] = "http://localhost:3000,http://localhost:5173"
 
-    @validator("CORS_ORIGINS", pre=True)
-    def parse_cors_origins(cls, v: str) -> List[str]:
+    @field_validator("CORS_ORIGINS", mode='before')
+    @classmethod
+    def parse_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
         """Parsea los orígenes CORS desde string a lista"""
         if isinstance(v, str):
             return [origin.strip() for origin in v.split(",")]

@@ -2,7 +2,7 @@
 Schemas Pydantic para User
 """
 
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, validator, computed_field
 from typing import Optional
 from datetime import datetime
 from app.models.user import UserRole
@@ -92,6 +92,12 @@ class User(UserBase):
     is_2fa_enabled: bool
     created_at: datetime
     last_login: Optional[datetime]
+
+    @computed_field
+    @property
+    def full_name(self) -> str:
+        """Retorna nombre completo"""
+        return f"{self.first_name} {self.last_name}"
 
     class Config:
         from_attributes = True
